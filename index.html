@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Kigo Xpress - Repartidor</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+html,
+body{
+margin:0;
+padding:0;
+width:100%;
+min-height:100%;
+font-family:
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Roboto,
+Arial,
+sans-serif;
+background:#f4f4f4;
+color:#171717;
+}
+
+body{
+overflow-x:hidden;
+}
+
+.app{
+width:100%;
+max-width:600px;
+min-height:100vh;
+margin:0 auto;
+background:#f4f4f4;
+}
+
+
+/* =====================================================
+   ENCABEZADO
+   ===================================================== */
+
+.header{
+background:#111;
+color:#fff;
+padding:
+18px
+18px
+20px;
+position:relative;
+}
+
+.header-top{
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.brand{
+font-size:22px;
+font-weight:800;
+letter-spacing:-.5px;
+}
+
+.brand span{
+color:#ef3333;
+}
+
+.status-container{
+display:flex;
+align-items:center;
+gap:7px;
+background:#202020;
+padding:7px 10px;
+border-radius:20px;
+}
+
+.status-dot{
+width:9px;
+height:9px;
+border-radius:50%;
+background:#22c55e;
+box-shadow:
+0 0 0 3px
+rgba(34,197,94,.15);
+}
+
+.status-text{
+font-size:11px;
+font-weight:700;
+color:#fff;
+}
+
+.header-name{
+margin-top:15px;
+font-size:13px;
+color:#aaa;
+}
+
+.header-name strong{
+color:#fff;
+font-size:15px;
+}
+
+
+/* =====================================================
+   NAVEGACIÓN
+   ===================================================== */
+
+.nav{
+background:#fff;
+display:flex;
+border-bottom:1px solid #e5e5e5;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.nav-button{
+flex:1;
+border:none;
+background:#fff;
+padding:14px 5px;
+font-size:12px;
+font-weight:700;
+color:#777;
+cursor:pointer;
+position:relative;
+}
+
+.nav-button.active{
+color:#111;
+}
+
+.nav-button.active:after{
+content:"";
+position:absolute;
+bottom:0;
+left:25%;
+right:25%;
+height:3px;
+background:#e53935;
+border-radius:
+4px
+4px
+0
+0;
+}
+
+
+/* =====================================================
+   CONTENIDO
+   ===================================================== */
+
+.content{
+padding:16px;
+}
+
+.section-title{
+font-size:18px;
+font-weight:800;
+margin-bottom:4px;
+color:#151515;
+}
+
+.section-subtitle{
+font-size:12px;
+color:#888;
+margin-bottom:15px;
+}
+
+
+/* =====================================================
+   CONTADOR DE PEDIDOS
+   ===================================================== */
+
+.order-counter{
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:#fff;
+padding:14px;
+border-radius:14px;
+margin-bottom:13px;
+border:1px solid #e8e8e8;
+}
+
+.counter-left{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.counter-icon{
+width:38px;
+height:38px;
+border-radius:11px;
+background:#fbe9e9;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#e53935;
+font-size:19px;
+font-weight:800;
+}
+
+.counter-title{
+font-size:13px;
+font-weight:700;
+}
+
+.counter-subtitle{
+font-size:11px;
+color:#888;
+margin-top:2px;
+}
+
+.counter-number{
+font-size:24px;
+font-weight:800;
+color:#e53935;
+}
+
+
+/* =====================================================
+   TARJETA DE PEDIDO
+   ===================================================== */
+
+.order-card{
+background:#fff;
+border-radius:17px;
+border:1px solid #e4e4e4;
+margin-bottom:14px;
+overflow:hidden;
+box-shadow:
+0 3px 12px
+rgba(0,0,0,.06);
+}
+
+.order-header{
+padding:14px 15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+border-bottom:1px solid #eee;
+}
+
+.order-number{
+font-size:13px;
+font-weight:800;
+color:#111;
+}
+
+.order-status{
+padding:6px 9px;
+border-radius:20px;
+background:#fff0f0;
+color:#e53935;
+font-size:10px;
+font-weight:800;
+}
+
+.order-body{
+padding:15px;
+}
+
+.location{
+display:flex;
+gap:11px;
+margin-bottom:15px;
+}
+
+.location:last-child{
+margin-bottom:0;
+}
+
+.location-icon{
+width:30px;
+height:30px;
+min-width:30px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+font-weight:800;
+color:#fff;
+}
+
+.pickup{
+background:#e53935;
+}
+
+.delivery{
+background:#111;
+}
+
+.location-content{
+flex:1;
+}
+
+.location-label{
+font-size:10px;
+color:#888;
+font-weight:700;
+text-transform:uppercase;
+letter-spacing:.4px;
+}
+
+.location-name{
+font-size:14px;
+font-weight:800;
+margin-top:3px;
+line-height:19px;
+}
+
+.location-address{
+font-size:11px;
+color:#777;
+line-height:16px;
+margin-top:2px;
+}
+
+
+/* =====================================================
+   INFORMACIÓN DEL PEDIDO
+   ===================================================== */
+
+.order-info{
+display:grid;
+grid-template-columns:
+repeat(3,1fr);
+gap:7px;
+margin-top:15px;
+}
+
+.order-info-box{
+background:#f6f6f6;
+border-radius:10px;
+padding:10px 5px;
+text-align:center;
+}
+
+.order-info-label{
+font-size:9px;
+color:#888;
+font-weight:700;
+}
+
+.order-info-value{
+font-size:13px;
+font-weight:800;
+margin-top:4px;
+color:#222;
+}
+
+
+/* =====================================================
+   PRECIO
+   ===================================================== */
+
+.order-price{
+margin-top:12px;
+padding:13px;
+background:#111;
+border-radius:11px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+color:#fff;
+}
+
+.order-price-label{
+font-size:11px;
+color:#bbb;
+}
+
+.order-price-value{
+font-size:20px;
+font-weight:800;
+}
+
+
+/* =====================================================
+   BOTONES
+   ===================================================== */
+
+.accept-button{
+width:100%;
+border:none;
+background:#e53935;
+color:#fff;
+padding:14px;
+border-radius:11px;
+font-size:14px;
+font-weight:800;
+margin-top:13px;
+cursor:pointer;
+box-shadow:
+0 4px 10px
+rgba(229,57,53,.22);
+}
+
+.accept-button:active{
+transform:scale(.98);
+}
+  /* =====================================================
+   ESTADO DEL SERVICIO
+   ===================================================== */
+
+.active-order{
+background:#fff;
+border-radius:17px;
+border:1px solid #e3e3e3;
+overflow:hidden;
+margin-bottom:15px;
+box-shadow:
+0 3px 12px
+rgba(0,0,0,.06);
+}
+
+.active-header{
+background:#111;
+color:#fff;
+padding:14px 15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.active-title{
+font-size:14px;
+font-weight:800;
+}
+
+.active-badge{
+background:#e53935;
+padding:6px 9px;
+border-radius:20px;
+font-size:10px;
+font-weight:800;
+}
+
+.active-body{
+padding:15px;
+}
+
+
+/* =====================================================
+   PASOS DEL SERVICIO
+   ===================================================== */
+
+.steps{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+position:relative;
+margin:
+5px
+5px
+20px;
+}
+
+.steps-line{
+position:absolute;
+top:17px;
+left:16%;
+right:16%;
+height:3px;
+background:#ddd;
+z-index:0;
+}
+
+.step-item{
+position:relative;
+z-index:1;
+width:30%;
+text-align:center;
+}
+
+.step-circle{
+width:34px;
+height:34px;
+border-radius:50%;
+margin:0 auto 7px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#e8e8e8;
+color:#888;
+font-size:12px;
+font-weight:800;
+border:3px solid #fff;
+box-shadow:
+0 2px 6px
+rgba(0,0,0,.1);
+}
+
+.step-item.active .step-circle{
+background:#e53935;
+color:#fff;
+}
+
+.step-item.completed .step-circle{
+background:#111;
+color:#fff;
+}
+
+.step-label{
+font-size:10px;
+font-weight:700;
+color:#888;
+}
+
+.step-item.active .step-label{
+color:#e53935;
+}
+
+.step-item.completed .step-label{
+color:#111;
+}
+
+
+/* =====================================================
+   BOTÓN CAMBIAR ESTADO
+   ===================================================== */
+
+.status-button{
+width:100%;
+border:none;
+padding:15px;
+border-radius:12px;
+font-size:14px;
+font-weight:800;
+cursor:pointer;
+background:#e53935;
+color:#fff;
+margin-top:5px;
+}
+
+.status-button:active{
+transform:scale(.98);
+}
+
+.status-button.black{
+background:#111;
+}
+
+
+/* =====================================================
+   DETALLES DEL PEDIDO ACTIVO
+   ===================================================== */
+
+.active-detail{
+background:#f7f7f7;
+padding:13px;
+border-radius:12px;
+margin-top:12px;
+}
+
+.detail-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:7px 0;
+border-bottom:1px solid #e5e5e5;
+}
+
+.detail-row:last-child{
+border-bottom:none;
+}
+
+.detail-label{
+font-size:11px;
+color:#777;
+}
+
+.detail-value{
+font-size:12px;
+font-weight:700;
+text-align:right;
+max-width:60%;
+}
+
+
+/* =====================================================
+   HISTORIAL
+   ===================================================== */
+
+.history-card{
+background:#fff;
+border-radius:15px;
+border:1px solid #e5e5e5;
+margin-bottom:11px;
+overflow:hidden;
+}
+
+.history-header{
+padding:13px 14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #eee;
+}
+
+.history-number{
+font-size:12px;
+font-weight:800;
+}
+
+.history-status{
+font-size:10px;
+font-weight:800;
+padding:5px 8px;
+border-radius:15px;
+background:#e8f7ed;
+color:#16803c;
+}
+
+.history-body{
+padding:13px 14px;
+}
+
+.history-route{
+display:flex;
+gap:9px;
+align-items:center;
+font-size:12px;
+font-weight:700;
+}
+
+.history-route-line{
+flex:1;
+height:1px;
+background:#ddd;
+}
+
+.history-date{
+font-size:10px;
+color:#888;
+margin-top:10px;
+}
+
+.history-price{
+margin-top:9px;
+font-size:16px;
+font-weight:800;
+color:#111;
+}
+
+
+/* =====================================================
+   SIN PEDIDOS
+   ===================================================== */
+
+.empty{
+background:#fff;
+border-radius:16px;
+padding:35px 20px;
+text-align:center;
+border:1px solid #e6e6e6;
+}
+
+.empty-icon{
+width:54px;
+height:54px;
+margin:0 auto 12px;
+border-radius:50%;
+background:#f2f2f2;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+}
+
+.empty-title{
+font-size:14px;
+font-weight:800;
+}
+
+.empty-text{
+font-size:11px;
+color:#888;
+margin-top:5px;
+line-height:17px;
+}
+
+
+/* =====================================================
+   PERFIL / ESTADO DEL REPARTIDOR
+   ===================================================== */
+
+.profile-card{
+background:#111;
+color:#fff;
+border-radius:17px;
+padding:18px;
+margin-bottom:15px;
+}
+
+.profile-top{
+display:flex;
+align-items:center;
+gap:13px;
+}
+
+.profile-avatar{
+width:50px;
+height:50px;
+border-radius:50%;
+background:#e53935;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:21px;
+font-weight:800;
+}
+
+.profile-name{
+font-size:16px;
+font-weight:800;
+}
+
+.profile-role{
+font-size:11px;
+color:#aaa;
+margin-top:3px;
+}
+
+.profile-status{
+margin-top:17px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+background:#1e1e1e;
+padding:11px 12px;
+border-radius:11px;
+}
+
+.profile-status-left{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.online-dot{
+width:9px;
+height:9px;
+border-radius:50%;
+background:#22c55e;
+}
+
+.profile-status-text{
+font-size:11px;
+font-weight:700;
+}
+
+.status-toggle{
+width:42px;
+height:24px;
+border-radius:20px;
+background:#22c55e;
+position:relative;
+cursor:pointer;
+}
+
+.status-toggle:after{
+content:"";
+position:absolute;
+width:18px;
+height:18px;
+border-radius:50%;
+background:#fff;
+top:3px;
+right:3px;
+box-shadow:
+0 1px 4px
+rgba(0,0,0,.3);
+}
+
+.status-toggle.off{
+background:#555;
+}
+
+.status-toggle.off:after{
+right:21px;
+}
+
+
+/* =====================================================
+   ESTADÍSTICAS
+   ===================================================== */
+
+.stats{
+display:grid;
+grid-template-columns:
+repeat(3,1fr);
+gap:8px;
+margin-bottom:15px;
+}
+
+.stat-box{
+background:#fff;
+border-radius:13px;
+padding:13px 5px;
+text-align:center;
+border:1px solid #e5e5e5;
+}
+
+.stat-number{
+font-size:20px;
+font-weight:800;
+color:#111;
+}
+
+.stat-label{
+font-size:9px;
+color:#888;
+margin-top:4px;
+font-weight:700;
+text-transform:uppercase;
+}
+
+
+/* =====================================================
+   UTILIDADES
+   ===================================================== */
+
+.hidden{
+display:none!important;
+}
+
+.section{
+display:none;
+}
+
+.section.active{
+display:block;
+}
+
+button{
+-webkit-tap-highlight-color:
+transparent;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =====================================================
+     ENCABEZADO
+     ===================================================== -->
+
+<div class="header">
+
+<div class="header-top">
+
+<div class="brand">
+Kigo <span>Xpress</span>
+</div>
+
+<div class="status-container">
+
+<div
+id="statusDot"
+class="status-dot">
+</div>
+
+<div
+id="statusText"
+class="status-text">
+Disponible
+</div>
+
+</div>
+
+</div>
+
+<div class="header-name">
+
+Repartidor:
+
+<strong id="driverName">
+Cargando...
+</strong>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     NAVEGACIÓN
+     ===================================================== -->
+
+<div class="nav">
+
+<button
+id="navOrders"
+class="nav-button active">
+
+Pedidos
+
+</button>
+
+<button
+id="navActive"
+class="nav-button">
+
+Servicio activo
+
+</button>
+
+<button
+id="navHistory"
+class="nav-button">
+
+Historial
+
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     CONTENIDO PRINCIPAL
+     ===================================================== -->
+
+<div class="content">
+
+
+<!-- =====================================================
+     SECCIÓN PEDIDOS NUEVOS
+     ===================================================== -->
+
+<div
+id="ordersSection"
+class="section active">
+
+<div class="section-title">
+
+Nuevos pedidos
+
+</div>
+
+<div class="section-subtitle">
+
+Aquí aparecerán los servicios disponibles.
+
+</div>
+
+
+<div class="order-counter">
+
+<div class="counter-left">
+
+<div class="counter-icon">
+
+!
+
+</div>
+
+<div>
+
+<div class="counter-title">
+
+Pedidos disponibles
+
+</div>
+
+<div class="counter-subtitle">
+
+Nuevos servicios para aceptar
+
+</div>
+
+</div>
+
+</div>
+
+<div
+id="orderCounter"
+class="counter-number">
+
+0
+
+</div>
+
+</div>
+
+
+<div
+id="ordersContainer">
+
+<div class="empty">
+
+<div class="empty-icon">
+
+🛵
+
+</div>
+
+<div class="empty-title">
+
+No hay pedidos nuevos
+
+</div>
+
+<div class="empty-text">
+
+Cuando llegue un nuevo servicio
+aparecerá aquí automáticamente.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     SECCIÓN SERVICIO ACTIVO
+     ===================================================== -->
+
+<div
+id="activeSection"
+class="section">
+
+<div class="section-title">
+
+Servicio activo
+
+</div>
+
+<div class="section-subtitle">
+
+Administra el pedido que estás realizando.
+
+</div>
+
+
+<div
+id="activeOrderContainer">
+
+<div class="empty">
+
+<div class="empty-icon">
+
+✓
+
+</div>
+
+<div class="empty-title">
+
+No tienes un servicio activo
+
+</div>
+
+<div class="empty-text">
+
+Cuando aceptes un pedido,
+aparecerá aquí.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     SECCIÓN HISTORIAL
+     ===================================================== -->
+
+<div
+id="historySection"
+class="section">
+
+<div class="section-title">
+
+Historial de pedidos
+
+</div>
+
+<div class="section-subtitle">
+
+Aquí se registrarán los servicios que
+ya hayas entregado.
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat-box">
+
+<div
+id="totalOrders"
+class="stat-number">
+
+0
+
+</div>
+
+<div class="stat-label">
+
+Pedidos
+
+</div>
+
+</div>
+
+<div class="stat-box">
+
+<div
+id="completedOrders"
+class="stat-number">
+
+0
+
+</div>
+
+<div class="stat-label">
+
+Entregados
+
+</div>
+
+</div>
+
+<div class="stat-box">
+
+<div
+id="totalEarned"
+class="stat-number">
+
+$0
+
+</div>
+
+<div class="stat-label">
+
+Total
+
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="historyContainer">
+
+<div class="empty">
+
+<div class="empty-icon">
+
+✓
+
+</div>
+
+<div class="empty-title">
+
+Historial vacío
+
+</div>
+
+<div class="empty-text">
+
+Los servicios que marques como
+entregados aparecerán aquí.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     PERFIL DEL REPARTIDOR
+     ===================================================== -->
+
+<div class="profile-card">
+
+<div class="profile-top">
+
+<div class="profile-avatar">
+
+KX
+
+</div>
+
+<div>
+
+<div
+id="profileName"
+class="profile-name">
+
+Repartidor
+
+</div>
+
+<div class="profile-role">
+
+Repartidor Kigo Xpress
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-status">
+
+<div class="profile-status-left">
+
+<div
+id="onlineDot"
+class="online-dot">
+</div>
+
+<div
+id="profileStatusText"
+class="profile-status-text">
+
+Estás disponible para recibir pedidos
+
+</div>
+
+</div>
+
+
+<div
+id="statusToggle"
+class="status-toggle">
+
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   DATOS DEL REPARTIDOR
+   ===================================================== */
+
+let repartidor={
+
+id:"REPARTIDOR-001",
+
+nombre:"Repartidor",
+
+disponible:true
+
+};
+
+
+/* =====================================================
+   PEDIDOS
+   ===================================================== */
+
+let pedidosNuevos=[];
+
+let pedidoActivo=null;
+
+let historialPedidos=[];
+
+
+/* =====================================================
+   ELEMENTOS
+   ===================================================== */
+
+const ordersSection=
+document.getElementById(
+"ordersSection"
+);
+
+const activeSection=
+document.getElementById(
+"activeSection"
+);
+
+const historySection=
+document.getElementById(
+"historySection"
+);
+
+const navOrders=
+document.getElementById(
+"navOrders"
+);
+
+const navActive=
+document.getElementById(
+"navActive"
+);
+
+const navHistory=
+document.getElementById(
+"navHistory"
+);
+
+const ordersContainer=
+document.getElementById(
+"ordersContainer"
+);
+
+const activeOrderContainer=
+document.getElementById(
+"activeOrderContainer"
+);
+
+const historyContainer=
+document.getElementById(
+"historyContainer"
+);
+
+const orderCounter=
+document.getElementById(
+"orderCounter"
+);
+
+const statusToggle=
+document.getElementById(
+"statusToggle"
+);
+
+const statusDot=
+document.getElementById(
+"statusDot"
+);
+
+const statusText=
+document.getElementById(
+"statusText"
+);
+
+const onlineDot=
+document.getElementById(
+"onlineDot"
+);
+
+const profileStatusText=
+document.getElementById(
+"profileStatusText"
+);
+
+
+/* =====================================================
+   NOMBRE DEL REPARTIDOR
+   ===================================================== */
+
+document.getElementById(
+"driverName"
+).innerText=
+repartidor.nombre;
+
+document.getElementById(
+"profileName"
+).innerText=
+repartidor.nombre;
+
+
+/* =====================================================
+   CAMBIAR SECCIÓN
+   ===================================================== */
+
+function mostrarSeccion(
+seccion
+){
+
+ordersSection.classList.remove(
+"active"
+);
+
+activeSection.classList.remove(
+"active"
+);
+
+historySection.classList.remove(
+"active"
+);
+
+navOrders.classList.remove(
+"active"
+);
+
+navActive.classList.remove(
+"active"
+);
+
+navHistory.classList.remove(
+"active"
+);
+
+
+if(
+seccion==="orders"
+){
+
+ordersSection.classList.add(
+"active"
+);
+
+navOrders.classList.add(
+"active"
+);
+
+}
+
+if(
+seccion==="active"
+){
+
+activeSection.classList.add(
+"active"
+);
+
+navActive.classList.add(
+"active"
+);
+
+}
+
+if(
+seccion==="history"
+){
+
+historySection.classList.add(
+"active"
+);
+
+navHistory.classList.add(
+"active"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   BOTONES DE NAVEGACIÓN
+   ===================================================== */
+
+navOrders.addEventListener(
+"click",
+function(){
+
+mostrarSeccion(
+"orders"
+);
+
+});
+
+
+navActive.addEventListener(
+"click",
+function(){
+
+mostrarSeccion(
+"active"
+);
+
+});
+
+
+navHistory.addEventListener(
+"click",
+function(){
+
+mostrarSeccion(
+"history"
+);
+
+});
+
+
+/* =====================================================
+   CAMBIAR DISPONIBILIDAD
+   ===================================================== */
+
+statusToggle.addEventListener(
+"click",
+function(){
+
+repartidor.disponible=
+!repartidor.disponible;
+
+
+if(
+repartidor.disponible
+){
+
+statusToggle.classList.remove(
+"off"
+);
+
+statusDot.style.background=
+"#22c55e";
+
+onlineDot.style.background=
+"#22c55e";
+
+statusText.innerText=
+"Disponible";
+
+profileStatusText.innerText=
+"Estás disponible para recibir pedidos";
+
+}else{
+
+statusToggle.classList.add(
+"off"
+);
+
+statusDot.style.background=
+"#777";
+
+onlineDot.style.background=
+"#777";
+
+statusText.innerText=
+"No disponible";
+
+profileStatusText.innerText=
+"No recibirás nuevos pedidos";
+
+}
+
+});
+
+
+/* =====================================================
+   CREAR TARJETA DE PEDIDO
+   ===================================================== */
+
+function crearTarjetaPedido(
+pedido
+){
+
+const card=
+document.createElement(
+"div"
+);
+
+card.className=
+"order-card";
+
+
+card.innerHTML=
+
+'<div class="order-header">'+
+
+'<div class="order-number">'+
+pedido.numero+
+'</div>'+
+
+'<div class="order-status">'+
+"NUEVO"+
+'</div>'+
+
+'</div>'+
+
+'<div class="order-body">'+
+
+'<div class="location">'+
+
+'<div class="location-icon pickup">'+
+"●"+
+'</div>'+
+
+'<div class="location-content">'+
+
+'<div class="location-label">'+
+"Recogida"+
+'</div>'+
+
+'<div class="location-name">'+
+pedido.recogida+
+'</div>'+
+
+'<div class="location-address">'+
+pedido.direccionRecogida+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+'<div class="location">'+
+
+'<div class="location-icon delivery">'+
+"●"+
+'</div>'+
+
+'<div class="location-content">'+
+
+'<div class="location-label">'+
+"Entrega"+
+'</div>'+
+
+'<div class="location-name">'+
+pedido.entrega+
+'</div>'+
+
+'<div class="location-address">'+
+pedido.direccionEntrega+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+'<div class="order-info">'+
+
+'<div class="order-info-box">'+
+'<div class="order-info-label">DISTANCIA</div>'+
+'<div class="order-info-value">'+
+pedido.distancia+
+'</div>'+
+'</div>'+
+
+'<div class="order-info-box">'+
+'<div class="order-info-label">TIEMPO</div>'+
+'<div class="order-info-value">'+
+pedido.tiempo+
+'</div>'+
+'</div>'+
+
+'<div class="order-info-box">'+
+'<div class="order-info-label">ESTADO</div>'+
+'<div class="order-info-value">Nuevo</div>'+
+'</div>'+
+
+'</div>'+
+
+'<div class="order-price">'+
+
+'<div class="order-price-label">'+
+"Valor del servicio"+
+'</div>'+
+
+'<div class="order-price-value">'+
+pedido.precio+
+'</div>'+
+
+'</div>'+
+
+'<button class="accept-button">'+
+"ACEPTAR PEDIDO"+
+'</button>'+
+
+'</div>';
+
+
+const boton=
+card.querySelector(
+".accept-button"
+);
+
+boton.addEventListener(
+"click",
+function(){
+
+aceptarPedido(
+pedido
+);
+
+});
+
+
+return card;
+
+}
+
+
+/* =====================================================
+   MOSTRAR PEDIDOS
+   ===================================================== */
+
+function renderPedidos(){
+
+ordersContainer.innerHTML="";
+
+
+orderCounter.innerText=
+pedidosNuevos.length;
+
+
+if(
+pedidosNuevos.length===0
+){
+
+ordersContainer.innerHTML=
+
+'<div class="empty">'+
+
+'<div class="empty-icon">🛵</div>'+
+
+'<div class="empty-title">'+
+"No hay pedidos nuevos"+
+'</div>'+
+
+'<div class="empty-text">'+
+"Cuando llegue un nuevo servicio aparecerá aquí automáticamente."+
+'</div>'+
+
+'</div>';
+
+return;
+
+}
+
+
+pedidosNuevos.forEach(
+function(pedido){
+
+ordersContainer.appendChild(
+crearTarjetaPedido(
+pedido
+)
+);
+
+});
+
+}
+
+
+/* =====================================================
+   ACEPTAR PEDIDO
+   ===================================================== */
+
+function aceptarPedido(
+pedido
+){
+
+if(
+!repartidor.disponible
+){
+
+alert(
+"Debes estar disponible para aceptar pedidos."
+);
+
+return;
+
+}
+
+
+if(
+pedidoActivo!==null
+){
+
+alert(
+"Ya tienes un servicio activo."
+);
+
+return;
+
+}
+
+
+pedidoActivo={
+...pedido,
+estado:"aceptado"
+};
+
+
+pedidosNuevos=
+pedidosNuevos.filter(
+function(item){
+
+return item.id!==pedido.id;
+
+}
+);
+
+
+renderPedidos();
+
+renderPedidoActivo();
+
+mostrarSeccion(
+"active"
+);
+
+}
+  /* =====================================================
+   RENDERIZAR SERVICIO ACTIVO
+   ===================================================== */
+
+function renderPedidoActivo(){
+
+activeOrderContainer.innerHTML="";
+
+if(pedidoActivo===null){
+
+activeOrderContainer.innerHTML=
+'<div class="empty">'+
+'<div class="empty-icon">✓</div>'+
+'<div class="empty-title">No tienes un servicio activo</div>'+
+'<div class="empty-text">'+
+"Cuando aceptes un pedido, aparecerá aquí."+
+'</div>'+
+'</div>';
+
+return;
+
+}
+
+
+/* =====================================================
+   DETERMINAR PASO ACTUAL
+   ===================================================== */
+
+let paso=1;
+
+if(pedidoActivo.estado==="aceptado"){
+paso=1;
+}
+
+if(pedidoActivo.estado==="recogido"){
+paso=2;
+}
+
+if(pedidoActivo.estado==="entregado"){
+paso=3;
+}
+
+
+/* =====================================================
+   TEXTO DEL BOTÓN
+   ===================================================== */
+
+let textoBoton="MARCAR COMO RECOGIDO";
+
+if(pedidoActivo.estado==="recogido"){
+textoBoton="MARCAR COMO ENTREGADO";
+}
+
+
+/* =====================================================
+   TARJETA DEL SERVICIO
+   ===================================================== */
+
+const card=
+document.createElement("div");
+
+card.className="active-order";
+
+
+card.innerHTML=
+
+'<div class="active-header">'+
+
+'<div class="active-title">'+
+"Servicio "+
+pedidoActivo.numero+
+'</div>'+
+
+'<div class="active-badge">'+
+(
+pedidoActivo.estado==="aceptado"
+?
+"ACEPTADO"
+:
+"EN SERVICIO"
+)+
+'</div>'+
+
+'</div>'+
+
+'<div class="active-body">'+
+
+
+/* =====================================================
+   PASOS
+   ===================================================== */
+
+'<div class="steps">'+
+
+'<div class="steps-line"></div>'+
+
+'<div class="step-item '+
+(paso>=1?"active ":"")+
+(paso>1?"completed":"")+
+'">'+
+
+'<div class="step-circle">1</div>'+
+
+'<div class="step-label">'+
+"ACEPTADO"+
+'</div>'+
+
+'</div>'+
+
+
+'<div class="step-item '+
+(paso>=2?"active ":"")+
+(paso>2?"completed":"")+
+'">'+
+
+'<div class="step-circle">2</div>'+
+
+'<div class="step-label">'+
+"RECOGIDO"+
+'</div>'+
+
+'</div>'+
+
+
+'<div class="step-item '+
+(paso>=3?"active ":"")+
+'">'+
+
+'<div class="step-circle">3</div>'+
+
+'<div class="step-label">'+
+"ENTREGADO"+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+
+/* =====================================================
+   RECOGIDA
+   ===================================================== */
+
+'<div class="location">'+
+
+'<div class="location-icon pickup">'+
+"●"+
+'</div>'+
+
+'<div class="location-content">'+
+
+'<div class="location-label">'+
+"RECOGER EN"+
+'</div>'+
+
+'<div class="location-name">'+
+pedidoActivo.recogida+
+'</div>'+
+
+'<div class="location-address">'+
+pedidoActivo.direccionRecogida+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+
+/* =====================================================
+   ENTREGA
+   ===================================================== */
+
+'<div class="location">'+
+
+'<div class="location-icon delivery">'+
+"●"+
+'</div>'+
+
+'<div class="location-content">'+
+
+'<div class="location-label">'+
+"ENTREGAR EN"+
+'</div>'+
+
+'<div class="location-name">'+
+pedidoActivo.entrega+
+'</div>'+
+
+'<div class="location-address">'+
+pedidoActivo.direccionEntrega+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+
+/* =====================================================
+   INFORMACIÓN
+   ===================================================== */
+
+'<div class="active-detail">'+
+
+'<div class="detail-row">'+
+
+'<div class="detail-label">'+
+"Distancia"+
+'</div>'+
+
+'<div class="detail-value">'+
+pedidoActivo.distancia+
+'</div>'+
+
+'</div>'+
+
+
+'<div class="detail-row">'+
+
+'<div class="detail-label">'+
+"Tiempo aproximado"+
+'</div>'+
+
+'<div class="detail-value">'+
+pedidoActivo.tiempo+
+'</div>'+
+
+'</div>'+
+
+
+'<div class="detail-row">'+
+
+'<div class="detail-label">'+
+"Valor del servicio"+
+'</div>'+
+
+'<div class="detail-value">'+
+pedidoActivo.precio+
+'</div>'+
+
+'</div>'+
+
+'</div>'+
+
+
+/* =====================================================
+   BOTÓN DE ESTADO
+   ===================================================== */
+
+(
+pedidoActivo.estado!=="entregado"
+?
+
+'<button id="statusActionButton" class="status-button">'+
+textoBoton+
+'</button>'
+
+:
+
+''
+)+
+
+'</div>';
+
+
+activeOrderContainer.appendChild(
+card
+);
+
+
+/* =====================================================
+   EVENTO DEL BOTÓN
+   ===================================================== */
+
+const statusButton=
+document.getElementById(
+"statusActionButton"
+);
+
+
+if(statusButton){
+
+statusButton.addEventListener(
+"click",
+function(){
+
+if(
+pedidoActivo.estado==="aceptado"
+){
+
+pedidoActivo.estado=
+"recogido";
+
+renderPedidoActivo();
+
+}
+
+else if(
+pedidoActivo.estado==="recogido"
+){
+
+finalizarPedido();
+
+}
+
+});
+
+}
+
+}
+
+
+/* =====================================================
+   FINALIZAR PEDIDO
+   ===================================================== */
+
+function finalizarPedido(){
+
+if(
+pedidoActivo===null
+){
+return;
+}
+
+
+/* Cambiar estado */
+
+pedidoActivo.estado=
+"entregado";
+
+
+/* Guardar fecha */
+
+pedidoActivo.fechaEntrega=
+new Date().toLocaleString(
+"es-MX",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric",
+hour:"2-digit",
+minute:"2-digit"
+}
+);
+
+
+/* =====================================================
+   PASAR AL HISTORIAL
+   ===================================================== */
+
+historialPedidos.unshift(
+pedidoActivo
+);
+
+
+/* =====================================================
+   GUARDAR EN EL TELÉFONO
+   ===================================================== */
+
+guardarHistorial();
+
+
+/* =====================================================
+   ELIMINAR SERVICIO ACTIVO
+   ===================================================== */
+
+pedidoActivo=null;
+
+
+/* Actualizar pantalla */
+
+renderPedidoActivo();
+
+renderHistorial();
+
+actualizarEstadisticas();
+
+
+/* Mostrar historial */
+
+mostrarSeccion(
+"history"
+);
+
+}
+
+
+/* =====================================================
+   GUARDAR HISTORIAL
+   ===================================================== */
+
+function guardarHistorial(){
+
+try{
+
+localStorage.setItem(
+"kigo_xpress_historial",
+JSON.stringify(
+historialPedidos
+)
+);
+
+}catch(e){
+
+console.log(
+"No se pudo guardar el historial."
+);
+
+}
+
+}
+
+
+/* =====================================================
+   CARGAR HISTORIAL
+   ===================================================== */
+
+function cargarHistorial(){
+
+try{
+
+const guardado=
+localStorage.getItem(
+"kigo_xpress_historial"
+);
+
+if(guardado){
+
+historialPedidos=
+JSON.parse(
+guardado
+);
+
+}
+
+}catch(e){
+
+historialPedidos=[];
+
+}
+
+renderHistorial();
+
+actualizarEstadisticas();
+
+}
+
+
+/* =====================================================
+   MOSTRAR HISTORIAL
+   ===================================================== */
+
+function renderHistorial(){
+
+historyContainer.innerHTML="";
+
+
+if(
+historialPedidos.length===0
+){
+
+historyContainer.innerHTML=
+
+'<div class="empty">'+
+
+'<div class="empty-icon">✓</div>'+
+
+'<div class="empty-title">'+
+"Historial vacío"+
+'</div>'+
+
+'<div class="empty-text">'+
+"Los servicios entregados aparecerán aquí."+
+'</div>'+
+
+'</div>';
+
+return;
+
+}
+
+
+historialPedidos.forEach(
+function(pedido){
+
+const card=
+document.createElement(
+"div"
+);
+
+card.className=
+"history-card";
+
+
+card.innerHTML=
+
+'<div class="history-header">'+
+
+'<div class="history-number">'+
+pedido.numero+
+'</div>'+
+
+'<div class="history-status">'+
+"ENTREGADO"+
+'</div>'+
+
+'</div>'+
+
+'<div class="history-body">'+
+
+'<div class="history-route">'+
+
+'<span>'+
+pedido.recogida+
+'</span>'+
+
+'<div class="history-route-line"></div>'+
+
+'<span>'+
+pedido.entrega+
+'</span>'+
+
+'</div>'+
+
+'<div class="history-date">'+
+(
+pedido.fechaEntrega||
+"Servicio finalizado"
+)+
+'</div>'+
+
+'<div class="history-price">'+
+pedido.precio+
+'</div>'+
+
+'</div>';
+
+
+historyContainer.appendChild(
+card
+);
+
+});
+
+}
+
+
+/* =====================================================
+   ESTADÍSTICAS
+   ===================================================== */
+
+function actualizarEstadisticas(){
+
+const total=
+historialPedidos.length;
+
+const entregados=
+historialPedidos.filter(
+function(pedido){
+
+return pedido.estado===
+"entregado";
+
+}
+).length;
+
+
+let dinero=0;
+
+
+historialPedidos.forEach(
+function(pedido){
+
+const numero=
+parseFloat(
+String(pedido.precio)
+.replace("$","")
+.replace(",","")
+);
+
+if(!isNaN(numero)){
+
+dinero+=numero;
+
+}
+
+});
+
+
+document.getElementById(
+"totalOrders"
+).innerText=
+total;
+
+
+document.getElementById(
+"completedOrders"
+).innerText=
+entregados;
+
+
+document.getElementById(
+"totalEarned"
+).innerText=
+"$"+
+dinero.toFixed(0);
+
+}
+
+
+/* =====================================================
+   GENERAR PEDIDO DE PRUEBA
+   ===================================================== */
+
+/*
+   ESTA FUNCIÓN ES SOLAMENTE PARA PROBAR
+   EL PANEL MIENTRAS TODAVÍA NO ESTÁ CONECTADO
+   AL SISTEMA REAL DE PEDIDOS.
+*/
+
+function agregarPedidoPrueba(){
+
+const pedido={
+
+id:
+"PED-"+Date.now(),
+
+numero:
+"KX-"+Date.now().toString().slice(-6),
+
+recogida:
+"Centro",
+
+direccionRecogida:
+"Zona Centro, Dolores Hidalgo",
+
+entrega:
+"La Otra Banda",
+
+direccionEntrega:
+"Colonia La Otra Banda, Dolores Hidalgo",
+
+distancia:
+"2.4 km",
+
+tiempo:
+"18 min",
+
+precio:
+"$45",
+
+estado:
+"nuevo"
+
+};
+
+
+pedidosNuevos.push(
+pedido
+);
+
+renderPedidos();
+
+}
+
+
+/* =====================================================
+   INICIALIZAR PANEL
+   ===================================================== */
+
+cargarHistorial();
+
+renderPedidos();
+
+renderPedidoActivo();
+
+
+/* =====================================================
+   PRUEBA AUTOMÁTICA
+   ===================================================== */
+
+/*
+   POR AHORA ESTÁ DESACTIVADA.
+
+   Cuando conectemos la base de datos,
+   los pedidos reales reemplazarán
+   esta función.
+*/
+
+// agregarPedidoPrueba();
+
+
+</script>
+
+</body>
+
+</html>
