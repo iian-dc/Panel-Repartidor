@@ -1,89 +1,99 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="manifest.json">
-<title>Panel Repartidor - Kigo</title>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kigo Xpress - Panel Repartidor</title>
 <style>
-:root{--rojo:#ef4444;--negro:#111}*{box-sizing:border-box}body{margin:0;font-family:sans-serif;background:#fff}
-.header{background:var(--negro);color:#fff;padding:16px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between}
-.tabs{display:flex;background:var(--negro);padding:0 12px;gap:8px}.tab{flex:1;padding:12px;text-align:center;font-weight:800;font-size:13px;cursor:pointer;border-radius:12px 12px 0 0;background:#222;color:#888}.tab.active{background:#fff;color:#111}
+:root{--rojo:#ef4444;--negro:#111;--gris:#f4f4f5}*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--gris)}
+.header{background:var(--negro);color:#fff;padding:16px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center}
+.tabs{display:flex;background:var(--negro);padding:0 12px;gap:8px}.tab{flex:1;padding:14px;text-align:center;font-weight:800;font-size:13px;cursor:pointer;border-radius:12px 12px 0 0;background:#222;color:#888}.tab.active{background:var(--gris);color:#111}
 .container{padding:12px;max-width:600px;margin:auto}
-.card{background:#fff;border:2px solid #111;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:4px 4px 0 #111}
-.card.nuevo{border-color:var(--rojo);box-shadow:4px 4px 0 var(--rojo);animation:temblor .2s infinite}
-@keyframes temblor{0%{transform:rotate(0)}25%{transform:rotate(1deg)}50%{transform:rotate(0)}75%{transform:rotate(-1deg)}100%{transform:rotate(0)}}
-.badge{padding:5px 10px;border-radius:20px;font-size:10px;font-weight:900;color:#fff}.pendiente{background:var(--rojo)}.aceptado{background:#f59e0b}.en_camino{background:#3b82f6}.entregado{background:#111}
-.btn{flex:1;padding:12px;border-radius:12px;border:2px solid #111;font-weight:800;cursor:pointer}.btn-rojo{background:var(--rojo);color:#fff}.btn-negro{background:var(--negro);color:#fff}.btns{display:flex;gap:8px;margin-top:10px}
-</style></head><body>
-<div class="header"><b>🛵 KIGO XPRESS</b><span id="contador">0</span><span id="estadoPush">🔴</span></div>
-<div class="tabs"><div id="tabActivos" class="tab active" onclick="switchTab('activos')">ACTIVOS</div><div id="tabHistorial" class="tab" onclick="switchTab('historial')">HISTORIAL</div></div>
-<div class="container"><div id="vistaActivos"></div><div id="vistaHistorial" style="display:none"></div></div>
-<div style="padding:20px;text-align:center"><button id="btnPush" style="background:#111;color:#fff;padding:16px 20px;border-radius:12px;font-weight:900;border:3px solid #111">🔔 ACTIVAR NOTIFICACIONES EN SEGUNDO PLANO</button><p style="font-size:12px;color:#666">Actívalo 1 sola vez. Sonará aunque cierres el navegador.</p></div>
+.card{background:#fff;border:2px solid #111;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:4px 4px 0 #111;position:relative}
+.card.nuevo{border-color:var(--rojo);box-shadow:4px 4px 0 var(--rojo)}
+.badge{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:900;color:#fff;text-transform:uppercase}.pendiente{background:var(--rojo)}.aceptado{background:#f59e0b}.en_camino{background:#3b82f6}.entregado{background:#111}
+.btn{flex:1;padding:13px;border-radius:12px;border:2px solid #111;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;display:block}.btn-rojo{background:var(--rojo);color:#fff}.btn-negro{background:var(--negro);color:#fff}.btn-verde{background:#22c55e;color:#fff}.btns{display:flex;gap:8px;margin-top:12px}
+.btn-borrar{position:absolute;top:10px;right:10px;background:#fff;border:1px solid #111;border-radius:50%;width:28px;height:28px;cursor:pointer}
+.dia-grupo{background:#111;color:#fff;padding:10px 14px;border-radius:12px;margin:18px 0 8px 0;display:flex;justify-content:space-between;font-weight:800}
+</style>
+</head>
+<body>
+<div class="header"><b>🛵 KIGO XPRESS</b><div><span id="fechaHoy"></span> | <b id="contador">0</b></div></div>
+<div class="tabs"><div id="tabActivos" class="tab active" onclick="switchTab('activos')">PEDIDOS DE HOY</div><div id="tabHistorial" class="tab" onclick="switchTab('historial')">HISTORIAL POR DÍA</div></div>
+<div class="container">
+  <div id="vistaActivos"></div>
+  <div id="vistaHistorial" style="display:none"></div>
+  <div id="zonaAdmin" style="display:none;margin-top:30px;border-top:2px dashed #111;padding-top:15px"><h3>🔧 Zona Admin - Borrar</h3><p style="font-size:12px">Estás en modo admin, puedes borrar pedidos.</p></div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const VAPID_KEY = "BGFiUE0nQHPy8NE3F92wbPjYkQAbF0lv8soRj5OWFf6QkHZF1lbfuPHV59mOEQ-uv6-179OIDJZEdTHhielW4Eg";
 const firebaseConfig = { apiKey: "AIzaSyBoVX8XacnE6OeguLOp_J3QKhfUrZnUB_4", authDomain: "kigo-xpress.firebaseapp.com", projectId: "kigo-xpress", storageBucket: "kigo-xpress.firebasestorage.app", messagingSenderId: "358613713443", appId: "1:358613713443:web:0b9d407dab250f13c56796" };
-
-const app = initializeApp(firebaseConfig); 
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const messaging = getMessaging(app);
-let primerCarga=true, pedidos=[];
-const audioContext = new (window.AudioContext||window.webkitAudioContext)();
 
-function sonarRappiIntenso(){
- if(audioContext.state === 'suspended') audioContext.resume();
- if('vibrate' in navigator) navigator.vibrate([500,100,500,100,500,100,1000]);
- let tiempo=0; const intervalo=setInterval(()=>{
-  const osc1=audioContext.createOscillator(); const gain1=audioContext.createGain();
-  osc1.type="square"; osc1.frequency.value=988; gain1.gain.value=0.9; osc1.connect(gain1); gain1.connect(audioContext.destination);
-  osc1.start(); gain1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.15); setTimeout(()=>osc1.stop(),150);
-  setTimeout(()=>{
-   const osc2=audioContext.createOscillator(); const gain2=audioContext.createGain();
-   osc2.type="square"; osc2.frequency.value=659; gain2.gain.value=0.9; osc2.connect(gain2); gain2.connect(audioContext.destination);
-   osc2.start(); gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime+0.15); setTimeout(()=>osc2.stop(),150);
-  },100);
-  tiempo+=250; if(tiempo>=3000) clearInterval(intervalo);
- },250);
-}
+const hoyString = new Date().toISOString().split('T')[0];
+document.getElementById('fechaHoy').innerText = new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+const esAdmin = new URLSearchParams(window.location.search).get('admin') === 'true';
+if(esAdmin) document.getElementById('zonaAdmin').style.display='block';
 
-async function activarPush(){
- try{
-  const permiso = await Notification.requestPermission();
-  if(permiso !== 'granted') { alert('Debes permitir notificaciones'); return; }
-  const registro = await navigator.serviceWorker.register('firebase-messaging-sw.js');
-  const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registro });
-  if(token){
-   await setDoc(doc(db, "repartidores_tokens", token), { token, fecha: new Date(), activo: true });
-   localStorage.setItem('kigo_push_token', token);
-   document.getElementById('estadoPush').innerText='🟢';
-   document.getElementById('btnPush').innerText='✅ NOTIFICACIONES ACTIVAS';
-   document.getElementById('btnPush').style.background='#22c55e';
-   await audioContext.resume(); sonarRappiIntenso();
-  }
- } catch(e){ console.error(e); alert('Error: '+e.message); }
-}
-document.getElementById('btnPush').addEventListener('click', activarPush);
-if(localStorage.getItem('kigo_push_token')){ document.getElementById('estadoPush').innerText='🟢'; document.getElementById('btnPush').innerText='✅ NOTIFICACIONES ACTIVAS'; document.getElementById('btnPush').style.background='#22c55e'; }
+let todosLosPedidos = [];
 
-onMessage(messaging, (payload)=>{ sonarRappiIntenso(); });
-
-const q=query(collection(db,"pedidos"), orderBy("timestamp","desc"));
-onSnapshot(q,(snap)=>{
- let hayNuevo=false;
- snap.docChanges().forEach(c=>{ if(c.type==="added" && !primerCarga && c.doc.data().estado==="pendiente") hayNuevo=true; });
- if(hayNuevo) sonarRappiIntenso();
- pedidos=snap.docs.map(d=>({id:d.id,...d.data()})); render(); primerCarga=false;
+const q = query(collection(db,"pedidos"), orderBy("timestamp","desc"));
+onSnapshot(q, (snap)=>{
+  todosLosPedidos = snap.docs.map(d=>({id:d.id,...d.data()}));
+  render();
 });
 
 function render(){
- const activos=pedidos.filter(p=>p.estado!=="entregado"); const historial=pedidos.filter(p=>p.estado==="entregado");
- document.getElementById("contador").innerText=`${activos.length} PEDIDOS`;
- document.getElementById("vistaActivos").innerHTML=activos.length?activos.map(p=>`<div class="card ${p.estado==="pendiente"?"nuevo":""}"><div style="display:flex;justify-content:space-between"><b>${p.numero_servicio}</b><span class="badge ${p.estado}">${p.estado}</span></div><div style="margin:8px 0">📍 <b>${p.colonia_recogida}</b> → <b>${p.colonia_entrega}</b><br><b style="font-size:20px">${p.valor_servicio}</b> ${p.distancia}</div><a href="${p.url_google_maps}" target="_blank">📍 Ver Ruta</a><div class="btns">${p.estado==="pendiente"?`<button class="btn btn-rojo" onclick="cambiar('${p.id}','aceptado')">ACEPTAR</button>`:``}${p.estado==="aceptado"?`<button class="btn btn-negro" onclick="cambiar('${p.id}','en_camino')">YA RECOGÍ</button>`:``}${p.estado==="en_camino"?`<button class="btn btn-negro" style="background:#22c55e" onclick="cambiar('${p.id}','entregado')">ENTREGADO ✅</button>`:``}</div></div>`).join("") : "<p style='text-align:center;padding:40px;color:#999'>Esperando pedidos...</p>";
- const vH=document.getElementById("vistaHistorial"); let total=0; historial.forEach(h=>total+=parseInt((h.valor_servicio||"").replace(/[^0-9]/g,""))||0);
- vH.innerHTML=historial.length?`<div style="background:#111;color:#fff;padding:12px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between"><b>${historial.length} entregas hoy</b><b>$${total}</b></div>`+historial.map(p=>`<div style="background:#f7f7f7;border:1px dashed #111;padding:10px;border-radius:12px;margin-bottom:6px;font-size:13px"><b>${p.numero_servicio}</b> ${p.colonia_recogida}→${p.colonia_entrega} ${p.valor_servicio}</div>`).join("") : "Sin historial";
+  // 1. PEDIDOS DE HOY - se reinicia solo cada día porque filtramos por fecha_string
+  const activosHoy = todosLosPedidos.filter(p=> p.fecha_string === hoyString && p.estado!== 'entregado');
+  document.getElementById("contador").innerText = `${activosHoy.length} pedidos`;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const pedidoResaltado = urlParams.get('pedido');
+
+  document.getElementById("vistaActivos").innerHTML = activosHoy.length? activosHoy.map(p=>{
+    const resaltar = pedidoResaltado === p.id? 'style="border-width:4px;transform:scale(1.02)"' : '';
+    return `<div class="card ${p.estado==='pendiente'?'nuevo':''}" ${resaltar}>
+      ${esAdmin? `<button class="btn-borrar" onclick="borrar('${p.id}')">X</button>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:center"><b>#${p.numero_del_dia} - ${p.numero_servicio}</b><span class="badge ${p.estado}">${p.estado}</span></div>
+      <div style="margin:10px 0;line-height:1.4">📍 <b>${p.colonia_recogida || ''}</b> → <b>${p.colonia_entrega || ''}</b><br>
+      💰 <b style="font-size:22px">${p.valor_servicio || ''}</b> <span style="color:#666">${p.distancia || ''}</span></div>
+      ${p.url_google_maps? `<a href="${p.url_google_maps}" target="_blank" class="btn btn-negro" style="margin-bottom:8px">📍 Ver Ruta en Maps</a>`:''}
+      <div class="btns">
+        ${p.estado==='pendiente'?`<button class="btn btn-rojo" onclick="cambiar('${p.id}','aceptado')">ACEPTAR PEDIDO</button>`:''}
+        ${p.estado==='aceptado'?`<button class="btn btn-negro" onclick="cambiar('${p.id}','en_camino')">YA RECOGÍ ✅</button>`:''}
+        ${p.estado==='en_camino'?`<button class="btn btn-verde" onclick="cambiar('${p.id}','entregado')">YA ENTREGUÉ ✅</button>`:''}
+      </div>
+    </div>`
+  }).join("") : `<p style='text-align:center;padding:60px 20px;color:#999'>No hay pedidos hoy (${hoyString})<br>Cuando crees uno desde Motomandados aparecerá aquí</p>`;
+
+  // 2. HISTORIAL AGRUPADO POR DÍA CON SUMA TOTAL
+  const entregados = todosLosPedidos.filter(p=>p.estado==='entregado');
+  const grupos = {};
+  entregados.forEach(p=>{
+    const fecha = p.fecha_string || 'sin-fecha';
+    if(!grupos[fecha]) grupos[fecha]=[];
+    grupos[fecha].push(p);
+  });
+
+  let htmlHistorial = "";
+  Object.keys(grupos).sort().reverse().forEach(fecha=>{
+    const lista = grupos[fecha];
+    let totalDia = 0;
+    lista.forEach(h=>{ totalDia += parseInt((h.valor_servicio||'').toString().replace(/[^0-9]/g,'')) || 0; });
+    htmlHistorial += `<div class="dia-grupo"><span>📅 ${fecha} - ${lista.length} pedidos</span><span>$${totalDia}</span></div>`;
+    htmlHistorial += lista.map(p=>`<div class="card" style="padding:10px;box-shadow:2px 2px 0 #111"><div style="display:flex;justify-content:space-between"><b>#${p.numero_del_dia} ${p.numero_servicio}</b><span style="font-size:12px">${p.valor_servicio}</span></div><div style="font-size:12px;color:#666">${p.colonia_recogida} → ${p.colonia_entrega}</div>${esAdmin? `<button onclick="borrar('${p.id}')" style="margin-top:6px;color:red;background:none;border:none;text-decoration:underline;cursor:pointer">Eliminar</button>`:''}</div>`).join("");
+  });
+
+  document.getElementById("vistaHistorial").innerHTML = htmlHistorial || "<p style='text-align:center;padding:40px;color:#999'>Aún no hay entregas</p>";
 }
-window.cambiar=async(id,est)=>{await updateDoc(doc(db,"pedidos",id),{estado:est})};
-window.switchTab=(t)=>{document.getElementById("tabActivos").classList.toggle("active",t==="activos");document.getElementById("tabHistorial").classList.toggle("active",t==="historial");document.getElementById("vistaActivos").style.display=t==="activos"?"block":"none";document.getElementById("vistaHistorial").style.display=t==="historial"?"block":"none";}
-</script></body></html>
+
+window.cambiar = async(id,est)=>{ await updateDoc(doc(db,"pedidos",id),{estado:est}); };
+window.borrar = async(id)=>{ if(confirm("¿Borrar este pedido para siempre?")) await deleteDoc(doc(db,"pedidos",id)); };
+window.switchTab = (t)=>{ document.getElementById("tabActivos").classList.toggle("active",t==='activos'); document.getElementById("tabHistorial").classList.toggle("active",t==='historial'); document.getElementById("vistaActivos").style.display=t==='activos'?'block':'none'; document.getElementById("vistaHistorial").style.display=t==='historial'?'block':'none'; };
+</script>
+</body>
+</html>
